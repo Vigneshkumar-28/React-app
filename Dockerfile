@@ -1,11 +1,19 @@
 # Use a base image
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Set custom DNS to resolve network issues
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+# Increase npm retry settings
+RUN npm config set fetch-retries 5
+RUN npm config set fetch-retry-mintimeout 20000
+RUN npm config set fetch-retry-maxtimeout 120000
 
 # Install dependencies
 RUN npm install
@@ -18,7 +26,9 @@ RUN npm run build
 
 # Use an nginx server to serve the built files
 FROM nginx:stable-alpine
-COPY --from=0 /app/build /usr/share/nginx/html
+
+# Copy the built files from the builder stage
+COPY --from=builder /app/build /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
