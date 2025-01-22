@@ -7,9 +7,6 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Set custom DNS to resolve network issues
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
-
 # Increase npm retry settings
 RUN npm config set fetch-retries 5
 RUN npm config set fetch-retry-mintimeout 20000
