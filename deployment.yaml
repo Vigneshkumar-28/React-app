@@ -1,4 +1,4 @@
-piVersion: apps/v1
+piVersion: apps/v2
 kind: Deployment
 metadata:
   name: react-app
