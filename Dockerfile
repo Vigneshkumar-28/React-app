@@ -1,4 +1,4 @@
- # Use a base image
+# Use a base image
 FROM node:18-alpine
 
 # Set the working directory
@@ -18,10 +18,15 @@ RUN npm run build
 
 # Use an nginx server to serve the built files
 FROM nginx:stable-alpine
+
+# Copy the built files to NGINX's default folder
 COPY --from=0 /app/build /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# Change NGINX config to listen on port 3200
+RUN sed -i 's/listen       80;/listen       3200;/' /etc/nginx/nginx.conf
+
+# Expose port 3200
+EXPOSE 3200
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
